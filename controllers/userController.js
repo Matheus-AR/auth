@@ -1,5 +1,7 @@
-const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/userModel');
+const config = require('../config/env.json');
 
 async function registrar(req, res) {
     const user = new User(req.body);
@@ -30,9 +32,10 @@ async function login(req, res) {
             }
             const autentica = bcrypt.compareSync(password, doc.password);
             if (!autentica) {
-                return res.status(400).json({ erro: "Senha inválida" })
+                return res.status(400).json({ erro: "Senha inválida " })
             }
-            return res.json({email: email, token: "abcd"});
+            const token = jwt.sign({id: doc._id}, config.segredo, {expiresIn: '1d'});
+            return res.json({email, token});
         })
         .catch(error => {
             return res.status(500).json(error);
