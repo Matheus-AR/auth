@@ -5,7 +5,6 @@ const config = require('../config/env.json');
 
 async function registrar(req, res) {
     const user = new User(req.body);
-    user.password = bcrypt.hashSync(user.password, 8);
     await user.save()
         .then(doc => {
             doc.password = undefined;
